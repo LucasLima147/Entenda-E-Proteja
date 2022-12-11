@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${myNews.titulo}">Noticia - XYZ E&P</title>
+    <script>
+        window.onload = function () {
+            var updateError = $("#updateError").is(":checked");
+            if (!updateError) {
+                return;
+            }
+
+            let title = "Erro ao nova solicitação";
+            let messsage = "Não foi possível realizar a nova solicitação. Por gentileza, tente novamente.";
+            showModelError(messsage, title, false);
+        }
+    </script>
+</head>
+
+<body>
+    <div layout:fragment="body">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">Início</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a th:href="@{/user/profile}">Meu perfil</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <a th:href="@{/news/user-news-list}">Suas notícias</a>
+            </li>
+            <li class="breadcrumb-item active">
+                Detalhes da notícia
+            </li>
+        </ol>
+        <h1 class="text-center">Detalhes da notícia</h1>
+        <div class="alert alert-danger col-12 text-center" th:if="${loadImageError}">
+            <span class="font-weight-bold align-middle">
+                Desculpe, não foi possível carregar a imagem da notícia.
+                Por gentileza, clique em <a th:href="@{/news/user-news-edit/{id} (id = ${myNews.id})}">Editar
+                    notícia</a> e selecione uma nova imagem.
+            </span>
+        </div>
+
+        <input type="checkbox" id="updateError" th:checked="${updateNewsError}" hidden />
+        <div class="container-fluid text-center navbar-expand-md col-12">
+            <hr>
+            <div class="row align-items-start">
+                <div class="col-md-12 text-center py-2">
+                    <div>
+                        <a th:href="@{/news/user-news-edit/{id} (id = ${myNews.id})}"
+                            class="btn btn-warning col-sm-5 py-2">
+                            Editar notícia
+                        </a>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-danger col-sm-5 py-2" data-toggle="modal"
+                            data-target="#exampleModal">
+                            Excluir notícia
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-center" id="exampleModalLabel">
+                                            Exclusão de notícia
+                                        </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Essa notícia será apagada permanentemente. Deseja continuar com a operação?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                            Não, cancelar operação
+                                        </button>
+                                        <a th:href="@{/news/delete-user-news/{id} (id = ${myNews.id})}"
+                                            class="btn btn-danger">
+                                            Sim, excluir notícia
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="py-2">
+                        <a th:href="@{/news/user-news-list}" class="btn btn-secondary col-sm-10 py-2">
+                            Voltar às suas notícias
+                        </a>
+                    </div>
+                    <div class="py-2" th:if="${myNews.situacao == 'RECUSADO'}">
+                        <hr>
+                        <p>A publicação desta notícia foi recusada. Atualize as informações da notícia e faça uma nova
+                            solicitação para avaliação</p>
+                        <a th:href="@{/news/new-publication-request/{id} (id = ${myNews.id})}"
+                            class="btn btn-success col-sm-10 py-2">
+                            Enviar notícia para avaliação.
+                        </a>
+                    </div>
+                    <hr>
+                </div>
+                <div class="alert alert-danger col-12 text-center py-2" th:if="${deleteNewsError}">
+                    <span class="font-weight-bold align-middle">
+                        Não foi possível realizar a exclusão da notícia. Por gentileza, tente novamente.
+                    </span>
+                </div>
+                <hr>
+                <img class="d-block w-100 banner_noticia py-2" th:src="@{${myNews.pathImageNews}}" alt="banner_exemplo">
+                <div class="col col-xl-10 col-md-12 col-sm-12 col-12 text-left">
+                    <br>
+                    <h1 th:text="${myNews.titulo}">Meu titulo</h1>
+                </div>
+                <div class="col col-xl-2 col-md-12 col-sm-12 col-12 text-left">
+                    <li class="list-group-item" th:text="${authorName}">Autor: Zezinho</li>
+                    <li class="list-group-item"
+                        th:text="${#dates.format(new java.util.Date(myNews.dataCriacao), 'dd/MM/yyyy')}">Data:
+                        01/01/2000
+                    </li>
+                    <li class="list-group-item" th:text="${myNews.categoria}">Categoria: XYZ</li>
+                </div>
+                <div class="col col-xl-12 col-md-12 col-sm-12 col-12 text-left">
+                    <hr>
+                    <p style="white-space: pre-wrap;" th:utext="${myNews.contexto}">Lorem ipsum dolor sit amet,
+                        consectetur
+                        adipiscing elit, sed
+                        do eiusmod
+                        tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed
+                        do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                        nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

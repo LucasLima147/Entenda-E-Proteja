@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de consultor E&P</title>
+    <script>
+        function phoneFormat(phone) {
+
+            var phoneValue = phone.value;
+
+            if (isNaN(phoneValue[phoneValue.length - 1])) { // impede entrar outro caractere que não seja número
+                phone.value = phoneValue.substring(0, phoneValue.length - 1);
+                return;
+            }
+
+            phone.setAttribute("maxlength", "14");
+            if (phoneValue.length == 1) phone.value = "(" + phone.value;
+            if (phoneValue.length == 3) phone.value += ") ";
+            if (phoneValue.length == 9) phone.value += "-";
+        }
+
+        function checkTypeService() {
+            let checkLegislativo = document.getElementById("checkLegislativo");
+            let checkTecnico = document.getElementById("checkTecnico");
+
+            if (checkLegislativo.checked || checkTecnico.checked) {
+                return true;
+            }
+            return false;
+
+        }
+
+        function validate() {
+            let accept = document.getElementById("acceptTermsCheck");
+
+            let tipoButton = "submit";
+            let existError = false;
+
+            let titleMessageError = "Problema(s) ao realizar a solicitação";
+            let messageError = "";
+
+            if (!checkTypeService()) {
+                tipoButton = "button";
+                messageError += "Selecione pelo menos um dos tipos de serviços.\n"
+                existError = true;
+            }
+
+            if (!accept.checked) {
+                tipoButton = "button";
+                messageError += "Só será possível cadastar seus dados se os Termos de Uso forem aceitados.\n"
+                existError = true;
+            }
+
+            if (existError) {
+                showModelError(messageError, titleMessageError, true);
+            }
+            document.getElementById("requestRegister").setAttribute("type", tipoButton);
+        }
+
+        window.onload = function () {
+            var alreadError = $("#alreadError").is(":checked");
+            var cnpjError = $("#cnpjError").is(":checked");
+            var registerError = $("#registerError").is(":checked");
+            if (!alreadError && !cnpjError && !registerError) {
+                return;
+            }
+
+            let title = "Problema(s) ao realizar a solicitação";
+            let message = "";
+
+            if (alreadError) {
+                message = "Você já possuí um cadastro como consultor. Verifique seu perfil ou entre em contato com o suporte.";
+            } else if (cnpjError) {
+                message = "O CNPJ informado já esta registrado. Por gentileza, informe outro CNPJ.";
+            } else if (registerError) {
+                message = "Desculpe, não foi possível concluir a sua solicitação. Por gentileza, tente novamente.";
+            }
+
+            showModelError(message, title, false);
+        }
+    </script>
+</head>
+
+<body>
+    <div layout:fragment="body">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">Início</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a th:href="@{/user/profile}">Meu perfil</a>
+            </li>
+            <li class="breadcrumb-item active">
+                Solicitar cadastro de consultor
+            </li>
+        </ol>
+
+        <div class="container-fluid text-center navbar-expand-md col-12">
+            <div class="row align-items-start">
+                <div class="container card border-0 rounded-lg login col-12 col-xl-8">
+                    <div class="card-header">
+                        <h3 class="text-center font-weight-light">Cadastro de Parceria</h3>
+                        <img class="logo" src="/resources/img/logo_invertido.png" alt="logo">
+                    </div>
+                    <div class="card-body">
+                        <input type="checkbox" id="alreadError" th:checked="${alreadyRegisteredPartner}" hidden>
+                        <input type="checkbox" id="cnpjError" th:checked="${alreadyRegisteredCnpj}" hidden>
+                        <input type="checkbox" id="registerError" th:checked="${registrationRequestProblems}" hidden>
+                        <form th:action="@{/partner/request-register}" method="post" th:object="${myPartner}">
+                            <div class="form-row">
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label class="mb-1" for="inputCompany">
+                                            Nome da empresa
+                                        </label>
+                                        <span data-tooltip="Dado Público">
+                                            <input class="form-control py-4" id="inputCompany" type="text"
+                                                placeholder="Insira o nome da sua empresa" required
+                                                data-toggle="tooltip" data-placement="top" title="Dado Público!"
+                                                th:field="${myPartner.nomeEmpresa}" />
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label class="mb-1" for="inputSite">
+                                            CNPJ</label>
+                                        <span data-tooltip="Dado Privado">
+                                            <input class="form-control py-4" id="inputAssunto" type="text"
+                                                placeholder="Insira o CNPJ da empresa" required data-toggle="tooltip"
+                                                data-placement="top" title="Dado Privado!"
+                                                th:field="${myPartner.cnpj}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label class="mb-1" for="inputSite">
+                                            Site da empresa
+                                        </label>
+                                        <span data-tooltip="Dado Público">
+                                            <input class="form-control py-4" id="inputSite" type="url"
+                                                placeholder="Insira o site da empresa" required data-toggle="tooltip"
+                                                data-placement="top" title="Dado Público!"
+                                                th:field="${myPartner.website}" />
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label class="mb-1" for="inputTelefone">
+                                            Telefone para contato
+                                        </label>
+                                        <span data-tooltip="Dado Público">
+                                            <input class="form-control py-4" id="inputTelefone" type="tel"
+                                                placeholder="Ex.: (00) 0000-0000" oninput="phoneFormat(this)"
+                                                data-toggle="tooltip" data-placement="top" title="Dado Público!"
+                                                th:field="${myPartner.telefone}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="mb-1" for="inputCompany">
+                                            Tipo de serviço de consultoria:
+                                        </label>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="checkLegislativo"
+                                            th:field="${myPartner.legislativo}">
+                                        <label class="form-check-label" for="checkLegislativo">
+                                            Legislativo
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="checkTecnico"
+                                            th:field="${myPartner.tecnico}">
+                                        <label class="form-check-label" for="checkTecnico">
+                                            Técnico
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+
+                                <label for="">Descrição da empresa</label>
+
+                                <textarea type="text" class="form-control" rows="10"
+                                    placeholder="Descreva os serviços oferecidos aos clientes ou informações relevante sobre sua empresa"
+                                    data-toggle="tooltip" data-placement="top" title="Dado Público!" required
+                                    th:field="${myPartner.descricao}"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="form-check-input" type="checkbox" id="acceptTermsCheck">
+                                    <label class="form-check-label" for="acceptTermsCheck">
+                                        Aceitar os <a th:href="@{/terms-conditions}">Termo de Uso</a>
+                                    </label>
+                                </div>
+                            </div>
+                            <input th:field="${myPartner.idUsuario}" hidden />
+                            <div class="mb-2">
+                                <a class="btn btn-secondary col-12" th:href="@{/user/profile}">Cancelar</a>
+                            </div>
+                            <div class="form-group mt-4 mb-0">
+                                <button class="btn btn-info btn-block" id="requestRegister" type="submit"
+                                    onclick="validate()">
+                                    Enviar para análise
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

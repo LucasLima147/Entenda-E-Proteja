@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de usuário E&P</title>
+    <script>
+        const titleMessageError = "Não foi possível realizar o cadastro";
+
+        function validaSenhas() {
+            let pass = document.getElementById("inputPassword");
+            let confirPass = document.getElementById("inputConfirmPassword");
+            let accept = document.getElementById("acceptTermsCheck");
+
+            let tipoButton = "submit";
+            let existError = false;
+
+
+            let messageError = "";
+
+            if (pass.value != confirPass.value) {
+                messageError += "Foram informadas senhas diferentes nos compos \"Senha\" e \"Confirme sua senha\".\n";
+                existError = true;
+            }
+
+            if (!accept.checked) {
+                messageError += "Só será possível cadastar seus dados se os termos de uso não foram aceitados.\n";
+                existError = true;
+            }
+
+            if (existError) {
+                tipoButton = "button";
+                showModelError(messageError, titleMessageError, true);
+            }
+
+            document.getElementById("cadastro").setAttribute("type", tipoButton);
+        }
+
+        window.onload = function () {
+            var account = $("#createAccount").is(":checked");
+            var email = $("#alreadyEmail").is(":checked");
+            if (!account && !email) {
+                return;
+            }
+
+            let messageError = "";
+            if (email) {
+                messageError = "O e-mail informado já esta registrado. Por gentileza, informe outro e-mail.";
+            } else if (account) {
+                messageError = "Desculpe, não foi possível concluir a cricação da conta. Por gentileza, tente novamente.";
+            }
+
+            showModelError(messageError, titleMessageError, false);
+        }
+    </script>
+</head>
+
+<body>
+    <div layout:fragment="body">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">Início</a>
+            </li>
+            <li class="breadcrumb-item active">
+                Cadastro de usuário
+            </li>
+        </ol>
+
+        <div class="container-fluid text-center navbar-expand-md col-12">
+            <div class="row align-items-start">
+                <div class="container card border-0 rounded-lg login col-12 col-xl-8">
+                    <div class="card-header">
+                        <h3 class="text-center font-weight-light">Criação de conta</h3>
+                        <img class="logo" src="/resources/img/logo_invertido.png" alt="logo">
+                    </div>
+                    <div class="card-body">
+
+                        <input type="checkbox" id="createAccount" th:checked="${accountCreationProblems}" hidden>
+                        <input type="checkbox" id="alreadyEmail" th:checked="${alreadyRegisteredEmail}" hidden>
+
+                        <form th:action="@{/account/create}" method="post" th:object="${myUser}">
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="inputUser">Nome de usuário</label>
+                                        <input class="form-control py-4" id="inputUser" type="text"
+                                            placeholder="Insira seu nome" data-toggle="tooltip" data-placement="top"
+                                            title="Dado Público!" th:field="${myUser.nome}" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="inputEmail">E-mail</label>
+                                        <span data-tooltip="Dado Privado">
+                                            <input class="form-control py-4" id="inputEmail" type="email"
+                                                placeholder="Insira o seu email" data-toggle="tooltip"
+                                                data-placement="top" title="Dado Pessoal!" th:field="${myUser.email}"
+                                                required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="inputPassword">Senha</label>
+                                        <span data-tooltip="Dado Anônimo">
+                                            <input class="form-control py-4" id="inputPassword" type="password"
+                                                placeholder="Insira a senha" data-toggle="tooltip" data-placement="top"
+                                                title="Dado Privado!" th:field="${myUser.senha}" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="inputConfirmPassword">Confirme sua
+                                            senha</label>
+                                        <span data-tooltip="Dado Anônimo">
+                                            <input class="form-control py-4" id="inputConfirmPassword" type="password"
+                                                placeholder="Confirme a senha" data-toggle="tooltip"
+                                                data-placement="top" title="Dado Privado!" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox mt-4">
+                                    <input class="form-check-input" type="checkbox" id="acceptTermsCheck">
+                                    <label class="form-check-label" for="acceptTermsCheck">
+                                        Aceitar os
+                                        <a th:href="@{/terms-conditions}">Termo de Uso</a>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group mt-4 mb-0">
+                                <button class="btn btn-info btn-block" id="cadastro" onclick="validaSenhas()"
+                                    type="submit"> Finalizar Cadastro
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <div class="small">
+                            <a th:href="@{/account/login}">Já possui uma conta? Faça o login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

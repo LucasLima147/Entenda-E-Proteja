@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Área do Admin. E&P</title>
+</head>
+
+<body>
+    <div layout:fragment="body">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">Início</a>
+            </li>
+            <li class="breadcrumb-item active">
+                Área do Administrador
+            </li>
+        </ol>
+
+        <div class="container-fluid text-center navbar-expand-md col-12">
+            <div class="row align-items-start">
+                <div class="container col-12">
+                    <div class="row perfil">
+                        <h1 class="col-12 py-3">Área do Administrador</h1>
+                        <div class="col-12 col-sm-6">
+                            <div class="mb-2 card">
+                                <div class="card-body bg-light">
+                                    <h5 class="card-title text-center text-dark">Avaliação de solicitações</h5>
+                                    <hr>
+                                    <div class="row py-2">
+                                        <a th:href="@{/partner/request-register-list}" class="btn btn-warning col-12">
+                                            Cadastro como consultor
+                                        </a>
+                                    </div>
+                                    <div class="row py-2">
+                                        <a th:href="@{/news/publication-request-list}" class="btn btn-warning col-12">
+                                            Propostas de notícias
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="mb-2 card">
+                                <div class="card-body bg-light">
+                                    <h5 class="card-title text-center text-dark">Solicitações reprovadas</h5>
+                                    <hr>
+                                    <div class="row py-2">
+                                        <a th:href="@{/partner/reproved-register-list}" class="btn btn-danger col-12">
+                                            Consultores reprovados
+                                        </a>
+                                    </div>
+                                    <div class="row py-2">
+                                        <a th:href="@{/news/rejected-news-list}" class="btn btn-danger col-12">
+                                            Notícias reprovadas
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2 col-12 col-sm-6">
+                            <div class="mb-2 card">
+                                <div class="card-body bg-light">
+                                    <h5 class="card-title text-dark">Gerenciamento de cadastros</h5>
+                                    <hr>
+                                    <div class="row py-2">
+                                        <a th:href="@{/user/read-all}" class="btn btn-info col-12">Lista de usuários</a>
+                                    </div>
+                                    <div class="row py-2">
+                                        <a th:href="@{/partner/admin-list}" class="btn btn-info col-12">
+                                            Lista de parceiros
+                                        </a>
+                                    </div>
+                                    <div class="row py-2">
+                                        <a th:href="@{/news/admin-list}" class="btn btn-info col-12">
+                                            Lista de notícias
+                                        </a>
+                                    </div>
+                                    <div class="row py-2">
+                                        <a th:href="@{/question/list}" class="btn btn-info col-12">Lista de questões</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
